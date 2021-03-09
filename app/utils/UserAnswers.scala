@@ -25,6 +25,7 @@ import identifiers.register.individual._
 import identifiers.register.partnership._
 import identifiers.register.partnership.partners.PartnerNameId
 import models._
+import play.api.Logger
 import play.api.libs.json._
 import utils.dataCompletion.DataCompletion
 import viewmodels.Person
@@ -32,6 +33,9 @@ import viewmodels.Person
 import scala.annotation.tailrec
 
 case class UserAnswers(json: JsValue = Json.obj()) {
+
+  private val logger = Logger(classOf[UserAnswers])
+
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     get[A](id.path)
   }
@@ -91,7 +95,9 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         )
       }
     }
-    directors.flatten
+    val dirs = directors.flatten
+    logger.debug(s"allDirectorsAfterDelete: directors: $dirs")
+    dirs
   }
 
   def directorsCount: Int = {
